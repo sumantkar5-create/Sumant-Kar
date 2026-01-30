@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { ViewState } from '../App';
 
 const Home: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+
+  // Optimization: Use MotionValues for high-frequency mouse updates
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  // Smooth out the mouse movement values
+  const springConfig = { damping: 50, stiffness: 400 };
+  const mouseXSpring = useSpring(mouseX, springConfig);
+  const mouseYSpring = useSpring(mouseY, springConfig);
+
+  // Create transforms from the smooth spring values
+  const rotateY = useTransform(mouseXSpring, (x) => x * 0.04);
+  const rotateX = useTransform(mouseYSpring, (y) => y * -0.04);
+  const moveX = useTransform(mouseXSpring, (x) => x * 0.4);
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 1024);
@@ -18,9 +31,14 @@ const Home: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) => {
     if (isMobile) return;
     const { clientX, clientY } = e;
     const { innerWidth, innerHeight } = window;
+    
+    // Calculate normalized coordinates (-15 to 15 range)
     const x = (clientX / innerWidth - 0.5) * 30;
     const y = (clientY / innerHeight - 0.5) * 30;
-    setMousePos({ x, y });
+    
+    // Update motion values directly
+    mouseX.set(x);
+    mouseY.set(y);
   };
 
   return (
@@ -53,11 +71,11 @@ const Home: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) => {
               opacity: { duration: 1 }
             }}
             style={{ 
-              x: mousePos.x * 0.4, 
-              rotateY: mousePos.x * 0.04,
-              rotateX: mousePos.y * -0.04,
+              x: moveX, 
+              rotateY: rotateY,
+              rotateX: rotateX,
             }}
-            className="relative w-full max-w-[420px] md:max-w-2xl lg:max-w-none aspect-[3/4] lg:h-[96vh] flex items-end"
+            className="relative w-full max-w-[420px] md:max-w-2xl lg:max-w-none aspect-[3/4] lg:h-[96vh] flex items-end will-change-transform"
           >
             {/* Subject Glow Backlight */}
             <motion.div 
@@ -80,7 +98,7 @@ const Home: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) => {
         </div>
 
         {/* RIGHT COLUMN: BRAND DETAILS (5/12) - Shifted Left to prevent clipping */}
-        <div className="lg:col-span-5 flex flex-col items-center lg:items-start justify-center text-center lg:text-left z-20 lg:-ml-16 xl:-ml-24">
+        <div className="lg:col-span-5 flex flex-col items-center lg:items-start justify-center text-center lg:text-left z-20 lg:-ml-28 xl:-ml-40">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -153,7 +171,7 @@ const Home: React.FC<{ setView: (v: ViewState) => void }> = ({ setView }) => {
         <motion.div 
           animate={{ x: [0, -1000] }}
           transition={{ repeat: Infinity, duration: 30, ease: "linear" }}
-          className="whitespace-nowrap flex gap-16 font-mono text-[9px] uppercase tracking-[0.3em] text-white/10"
+          className="whitespace-nowrap flex gap-16 font-mono text-[9px] uppercase tracking-[0.3em] text-white/10 will-change-transform"
         >
           {[...Array(12)].map((_, i) => (
             <span key={i} className="flex items-center gap-16">
