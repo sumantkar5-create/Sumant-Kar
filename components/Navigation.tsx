@@ -22,33 +22,12 @@ const Navigation: React.FC<NavProps> = ({ currentView, setView }) => {
           </button>
         </div>
         
-        <div className="pointer-events-auto">
-          <button 
-            onClick={() => setView('about')}
-            className={`relative py-1 px-4 font-mono text-[9px] md:text-[10px] uppercase tracking-[0.4em] transition-all duration-300 active:scale-90 ${
-              currentView === 'about' ? 'text-accent font-bold' : 'text-neutral-500 hover:text-white'
-            }`}
-          >
-            Profile
-            {currentView === 'about' && (
-              <motion.div 
-                layoutId="nav-dot" 
-                className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-accent rounded-full" 
-              />
-            )}
-          </button>
-        </div>
+        {/* Profile Link Removed as per request */}
       </div>
 
-      {/* Bottom Bar - Socials Only */}
+      {/* Bottom Bar - Clean */}
       <div className="flex justify-end items-end">
-        <div className="flex gap-6 md:gap-8 pointer-events-auto items-center">
-          <div className="flex gap-6 md:gap-8 font-mono text-[9px] uppercase tracking-[0.3em] bg-black/40 md:bg-transparent backdrop-blur-md md:backdrop-blur-none p-3 md:p-0 rounded-full border border-white/5 md:border-none">
-            <a href="#" className="text-neutral-500 hover:text-accent transition-all hover:-translate-y-1">LI</a>
-            <a href="#" className="text-neutral-500 hover:text-accent transition-all hover:-translate-y-1">TW</a>
-            <a href="#" className="text-neutral-500 hover:text-accent transition-all hover:-translate-y-1">IG</a>
-          </div>
-        </div>
+        {/* Social Shortcuts Removed */}
       </div>
     </nav>
   );

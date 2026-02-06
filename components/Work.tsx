@@ -1,207 +1,247 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { PORTFOLIO_ITEMS } from '../constants';
-import { ArrowRight } from 'lucide-react';
-
-const getTheme = (index: number) => {
-  const themes = [
-    { 
-      text: 'text-sport-blue', 
-      border: 'border-sport-blue',
-      hoverGlow: 'group-hover:shadow-[0_0_40px_rgba(0,242,255,0.15)]',
-      hoverText: 'group-hover:text-sport-blue',
-      hoverBorder: 'group-hover:border-sport-blue'
-    },
-    { 
-      text: 'text-sport-green', 
-      border: 'border-sport-green',
-      hoverGlow: 'group-hover:shadow-[0_0_40px_rgba(0,255,102,0.15)]',
-      hoverText: 'group-hover:text-sport-green',
-      hoverBorder: 'group-hover:border-sport-green'
-    },
-    { 
-      text: 'text-sport-crimson', 
-      border: 'border-sport-crimson',
-      hoverGlow: 'group-hover:shadow-[0_0_40px_rgba(255,0,85,0.15)]',
-      hoverText: 'group-hover:text-sport-crimson',
-      hoverBorder: 'group-hover:border-sport-crimson'
-    },
-    { 
-      text: 'text-sport-gold', 
-      border: 'border-sport-gold',
-      hoverGlow: 'group-hover:shadow-[0_0_40px_rgba(255,214,10,0.15)]',
-      hoverText: 'group-hover:text-sport-gold',
-      hoverBorder: 'group-hover:border-sport-gold'
-    },
-  ];
-  return themes[index % themes.length];
-};
+import { ArrowUpRight } from 'lucide-react';
 
 const Work: React.FC = () => {
+  const containerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ container: containerRef });
+  
+  // Parallax background movement based on scroll
+  const yMove1 = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
+  const yMove2 = useTransform(scrollYProgress, [0, 1], ['0%', '-20%']);
+
   return (
     <motion.section 
-      initial={{ x: '100%' }}
-      animate={{ x: 0 }}
-      exit={{ x: '100%' }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed inset-0 z-40 bg-brand-black"
+      ref={containerRef}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-40 bg-brand-black overflow-y-auto no-scrollbar"
     >
-      {/* FUTURISTIC CHROMATIC BACKGROUND LAYER - OPTIMIZED */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none" style={{ transform: 'translateZ(0)' }}>
-        <div className="absolute inset-0 bg-brand-black"></div>
+      {/* CINEMATIC BACKGROUND SYSTEM */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* Deep Dark Base */}
+        <div className="absolute inset-0 bg-[#020203]" />
         
-        {/* Animated Chromatic Auras - Reduced Blur and removed mix-blend for performance */}
+        {/* Animated Gradient: Deep Green (Top Left) */}
         <motion.div 
+          style={{ y: yMove1 }}
           animate={{ 
-            scale: [1, 1.15, 1],
-            rotate: [0, 45, 0],
-            opacity: [0.15, 0.25, 0.15],
+            scale: [1, 1.1, 1],
+            opacity: [0.2, 0.3, 0.2],
           }}
-          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-[10%] -left-[10%] w-[60vw] h-[60vw] bg-gradient-to-br from-sport-blue/40 to-purple-500/10 blur-[80px] rounded-full will-change-transform"
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-[20%] -left-[10%] w-[80vw] h-[80vw] rounded-full bg-[#052e16] blur-[150px] mix-blend-screen"
         />
+        
+        {/* Animated Gradient: Muted Amber (Bottom Right) */}
         <motion.div 
+          style={{ y: yMove2 }}
           animate={{ 
             scale: [1, 1.2, 1],
-            rotate: [0, -30, 0],
-            opacity: [0.1, 0.2, 0.1],
+            opacity: [0.15, 0.25, 0.15],
           }}
-          transition={{ duration: 30, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute top-[30%] -right-[15%] w-[50vw] h-[50vw] bg-gradient-to-bl from-sport-crimson/30 to-sport-gold/5 blur-[80px] rounded-full will-change-transform"
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute -bottom-[20%] -right-[10%] w-[90vw] h-[90vw] rounded-full bg-[#431407] blur-[180px] mix-blend-screen"
         />
+
+        {/* Animated Gradient: Warm Charcoal (Center/Moving) */}
         <motion.div 
           animate={{ 
-            x: [0, 50, 0],
-            y: [0, 30, 0],
-            opacity: [0.05, 0.1, 0.05],
+            x: ['-10%', '10%', '-10%'],
+            y: ['-10%', '10%', '-10%'],
+            opacity: [0.1, 0.2, 0.1]
           }}
-          transition={{ duration: 35, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[-5%] left-[15%] w-[40vw] h-[40vw] bg-sport-green/20 blur-[80px] rounded-full will-change-transform"
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="absolute top-[20%] left-[20%] w-[60vw] h-[60vw] rounded-full bg-[#1c1917] blur-[120px] mix-blend-overlay"
         />
 
-        {/* Technical Grid Overlay - High performance opacity */}
-        <div className="absolute inset-0 bg-blueprint-grid bg-[size:50px_50px] opacity-[0.03]"></div>
+        {/* Film Grain Texture - Background Only */}
+        <div className="absolute inset-0 opacity-[0.04] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150 mix-blend-overlay" />
         
-        {/* Vignette */}
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-transparent to-brand-black/40"></div>
+        {/* Vignette Overlay for Focus */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,2,3,0.8)_80%,rgba(2,2,3,1)_100%)]" />
+        
+        {/* Subtle Grid */}
+        <div className="absolute inset-0 bg-blueprint-grid bg-[size:100px_100px] opacity-[0.03] mix-blend-overlay" />
       </div>
 
-      {/* SCROLLABLE CONTENT LAYER - Optimized Scroll */}
-      <div className="absolute inset-0 z-10 overflow-y-auto custom-scrollbar overflow-x-hidden">
-        <div className="max-w-screen-xl mx-auto px-4 md:px-12 py-24 md:py-48">
-          
-          {/* Header Section */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-24 md:mb-48 border-b border-white/10 pb-12 relative">
-            <motion.h1 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="font-display text-5xl md:text-[10vw] leading-none uppercase tracking-tighter"
-            >
-              Power<br /><span className="text-accent italic">Works</span>
-            </motion.h1>
-            <div className="font-mono text-[9px] md:text-xs uppercase tracking-[0.3em] text-neutral-400 mt-8 md:mt-0 text-left md:text-right">
-              <div className="text-accent font-bold">ARCHIVE_V25</div>
-              <div className="mt-1 opacity-50">PERFORMANCE METRICS</div>
+      {/* ARCHIVE FEED - GRID LAYOUT */}
+      <div className="relative z-10 w-full pt-32 pb-32 px-6 md:px-12 lg:px-24">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24">
+          {PORTFOLIO_ITEMS.map((project, idx) => (
+            <ProjectCard key={project.id} project={project} index={idx} />
+          ))}
+        </div>
+      </div>
+
+      {/* PROFESSIONAL PROFILE SECTION */}
+      <div className="relative z-10 w-full px-6 md:px-12 lg:px-24 pb-32">
+        <div className="max-w-7xl mx-auto border-t border-white/10 pt-32">
+          {/* Identity & Bio */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-24">
+            <div className="lg:col-span-8">
+              <motion.h2 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="font-display text-5xl md:text-7xl uppercase tracking-tighter leading-[0.9] mb-8 text-white"
+              >
+                 Sports Media<br /><span className="text-accent">Strategist</span>
+              </motion.h2>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="font-body text-xl text-neutral-400 max-w-2xl leading-relaxed mb-8"
+              >
+                Content Lead & Graphic Designer specializing in football-focused visual design, content strategy, and audience growth.
+              </motion.p>
+              <motion.div 
+                 initial={{ opacity: 0 }}
+                 whileInView={{ opacity: 1 }}
+                 viewport={{ once: true }}
+                 transition={{ delay: 0.3 }}
+                 className="flex flex-wrap gap-3"
+              >
+                 {['Sports Visual Design', 'Social Media Design', 'Motion Graphics', 'Branding Systems', 'Web Visuals'].map((s, i) => (
+                   <span key={i} className="px-3 py-1 border border-white/10 rounded-full text-xs font-mono uppercase text-neutral-400 tracking-wider bg-white/5">{s}</span>
+                 ))}
+              </motion.div>
             </div>
           </div>
 
-          {/* Projects List */}
-          <div className="flex flex-col gap-24 md:gap-48 lg:gap-72">
-            {PORTFOLIO_ITEMS.map((item, idx) => {
-              const theme = getTheme(idx);
-              
-              return (
-                <motion.div 
-                  key={item.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-10%" }}
-                  className="group w-full relative"
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16 lg:gap-24 items-start relative z-10">
-                    
-                    {/* Info Column */}
-                    <div className="md:col-span-5 flex flex-col md:sticky md:top-32">
-                      <div className="flex items-baseline justify-between mb-8 md:mb-12 border-b border-white/5 pb-4 md:pb-6">
-                        <span className={`font-display text-6xl md:text-9xl leading-none transition-all duration-500 ${theme.hoverText} text-neutral-800`}>
-                          0{idx + 1}
-                        </span>
-                        <span className={`font-mono text-[10px] md:text-xs uppercase tracking-widest ${theme.text}`}>
-                          {item.year}
-                        </span>
-                      </div>
-
-                      <div className="space-y-6 md:space-y-10">
-                         <div>
-                           <h2 className="font-display text-3xl md:text-5xl lg:text-6xl uppercase leading-tight md:leading-[0.85] tracking-tight mb-4 md:mb-8 transition-colors group-hover:text-white">
-                             {item.title}
-                           </h2>
-                           <div className="flex flex-wrap gap-2">
-                              {item.tags?.map((tag, i) => (
-                                <span key={i} className="px-3 py-1 border border-white/5 rounded-full font-mono text-[8px] md:text-[10px] uppercase tracking-wider text-neutral-500 group-hover:text-neutral-300 transition-colors">
-                                  {tag}
-                                </span>
-                              ))}
-                           </div>
-                         </div>
-
-                         <p className="font-body text-neutral-400 text-sm md:text-lg leading-relaxed max-w-md">
-                           {item.description}
-                         </p>
-
-                         {/* OPTIMIZED: Removed backdrop-blur for scrolling performance */}
-                         <div className={`flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-6 p-4 md:p-6 border ${theme.border} bg-brand-surface/90 rounded-lg border-opacity-20 group-hover:border-opacity-100 transition-all shadow-xl`}>
-                            <div className="flex flex-col">
-                               <span className="font-mono text-[8px] uppercase tracking-widest text-neutral-500">Peak Reach</span>
-                               <span className={`font-display text-lg md:text-2xl uppercase ${theme.text}`}>{item.stats}</span>
-                            </div>
-                            <div className={`hidden sm:block h-8 w-[1px] ${theme.text.replace('text-', 'bg-')} opacity-20`}></div>
-                            <button className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-white active:scale-95">
-                              Explore
-                              <ArrowRight className={`w-3 h-3 md:w-4 md:h-4 ${theme.text} group-hover:translate-x-1 transition-transform`} />
-                            </button>
-                         </div>
-                      </div>
-                    </div>
-
-                    {/* Visual Column */}
-                    <div className="md:col-span-7">
-                      <div className={`relative w-full aspect-[4/5] overflow-hidden rounded-lg md:rounded-xl bg-brand-surface border border-white/10 transition-all duration-700 ${theme.hoverBorder} ${theme.hoverGlow}`}>
-                        <img 
-                          src={item.image} 
-                          alt={item.title}
-                          loading="lazy"
-                          className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 grayscale group-hover:grayscale-0 will-change-transform"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-brand-black/80 via-transparent to-transparent opacity-60"></div>
-                        <div className="absolute bottom-4 left-4 md:bottom-8 md:left-8">
-                          <div className={`bg-black/90 px-4 py-2 rounded-full border border-white/5`}>
-                            <span className={`font-mono text-[9px] md:text-xs uppercase tracking-widest font-bold ${theme.text}`}>
-                              {item.category}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
+          {/* Experience & Tools Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
+            {/* Experience */}
+            <div className="lg:col-span-7 space-y-16">
+              <h3 className="font-display text-2xl text-white uppercase mb-8 flex items-center gap-4">
+                Experience
+                <div className="h-[1px] flex-1 bg-white/10"></div>
+              </h3>
+              {[
+                { role: 'Founder & Content Lead', company: 'WTFootballIndia', period: '2019 — Present', desc: 'Scaling to 36K+ followers. Creating matchday, tactical, and breaking-news visuals, and building scalable content systems.' },
+                { role: 'Social Media Manager & Sr. Designer', company: '9sportz', period: '2023 — 2025', desc: 'High-performance sports creatives, engagement growth, and traffic-driving campaigns.' },
+                { role: 'Freelance Designer & Strategist', company: 'Sports Media', period: '2021 — Present', desc: 'Covering visuals, motion assets, brand consistency, and growth-focused design for various entities.' }
+              ].map((job, i) => (
+                 <motion.div 
+                   key={i} 
+                   initial={{ opacity: 0, y: 20 }}
+                   whileInView={{ opacity: 1, y: 0 }}
+                   viewport={{ once: true }}
+                   transition={{ delay: i * 0.1 }}
+                   className="group"
+                 >
+                   <div className="flex justify-between items-baseline mb-2">
+                     <h4 className="font-display text-xl md:text-2xl text-white group-hover:text-accent transition-colors">{job.company}</h4>
+                     <span className="font-mono text-xs text-neutral-500">{job.period}</span>
+                   </div>
+                   <div className="font-mono text-xs text-accent mb-3 uppercase tracking-wider">{job.role}</div>
+                   <p className="font-body text-neutral-400 text-sm md:text-base leading-relaxed max-w-xl">{job.desc}</p>
+                 </motion.div>
+              ))}
+            </div>
+            
+            {/* Tools & Credibility */}
+            <div className="lg:col-span-5 space-y-16">
+               {/* Credibility */}
+               <motion.div
+                 initial={{ opacity: 0, y: 20 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true }}
+               >
+                  <h3 className="font-display text-2xl text-white uppercase mb-8 flex items-center gap-4">
+                    Impact
+                    <div className="h-[1px] flex-1 bg-white/10"></div>
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                     <div className="p-6 bg-brand-surface border border-white/5 hover:border-accent/20 transition-colors">
+                       <div className="font-display text-3xl md:text-4xl text-white mb-2">36K+</div>
+                       <div className="font-mono text-[10px] text-neutral-500 uppercase tracking-widest">Followers</div>
+                     </div>
+                     <div className="p-6 bg-brand-surface border border-white/5 hover:border-accent/20 transition-colors">
+                       <div className="font-display text-3xl md:text-4xl text-white mb-2">Top 1%</div>
+                       <div className="font-mono text-[10px] text-neutral-500 uppercase tracking-widest">Engagement</div>
+                     </div>
                   </div>
-                </motion.div>
-              );
-            })}
-          </div>
+                  <p className="mt-6 font-body text-sm text-neutral-500 leading-relaxed">
+                    Collaborating with football professionals to elevate their digital presence through data-backed design.
+                  </p>
+               </motion.div>
 
-          {/* Dynamic Footer CTA */}
-          <div className="mt-48 md:mt-64 py-24 md:py-32 border-t-2 border-accent/20 flex flex-col items-center">
-            <h3 className="font-display text-4xl md:text-[8vw] uppercase tracking-tighter text-white italic text-center leading-none mb-12">
-              Next Level?
-            </h3>
-            <a href="mailto:hello@sumantkar.com" className="px-8 md:px-12 py-4 md:py-6 bg-white text-black font-display text-sm md:text-xl uppercase tracking-widest hover:bg-accent hover:text-white transition-all duration-300 rounded-sm active:scale-95">
-              Initiate Project
-            </a>
+               {/* Tools */}
+               <motion.div
+                 initial={{ opacity: 0, y: 20 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true }}
+                 transition={{ delay: 0.2 }}
+               >
+                  <h3 className="font-display text-2xl text-white uppercase mb-8 flex items-center gap-4">
+                    Tools
+                    <div className="h-[1px] flex-1 bg-white/10"></div>
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                     {['Photoshop', 'Illustrator', 'Figma', 'Jitter', 'Canva', 'Lightroom', 'Affinity'].map((t, i) => (
+                       <span key={i} className="px-3 py-2 bg-neutral-900 border border-white/5 text-neutral-400 font-mono text-xs uppercase hover:text-white hover:border-white/20 transition-colors cursor-default">{t}</span>
+                     ))}
+                  </div>
+               </motion.div>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* FOOTER ACTION */}
+      <div className="relative z-10 w-full pb-32 text-center px-6 border-t border-white/5 pt-32">
+        <div className="max-w-4xl mx-auto">
+          <p className="font-mono text-xs text-accent uppercase tracking-[0.3em] mb-8">Available for Commission</p>
+          <button 
+            onClick={() => window.location.href = 'mailto:hello@sumantkar.com'}
+            className="group relative inline-flex items-center gap-6 px-12 py-6 bg-white text-black font-display text-lg uppercase tracking-widest hover:bg-accent hover:text-white transition-all overflow-hidden"
+          >
+            <span className="relative z-10">Initiate Brief</span>
+            <ArrowUpRight className="relative z-10 w-5 h-5 group-hover:rotate-45 transition-transform" />
+            <div className="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
+          </button>
+        </div>
+      </div>
     </motion.section>
+  );
+};
+
+const ProjectCard: React.FC<{ project: any; index: number }> = ({ project, index }) => {
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, margin: "-10%" }}
+      className="flex flex-col gap-8 group"
+    >
+      {/* HIGH QUALITY PREVIEW CARD - CLEAN & SHARP */}
+      <div className="relative w-full aspect-[4/5] bg-brand-surface rounded-sm overflow-hidden shadow-xl transition-all duration-500 group-hover:shadow-2xl border border-white/5">
+        <img 
+          src={project.image} 
+          alt={project.title}
+          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        />
+        
+        {/* Subtle separation / Inner Border - No heavy overlays */}
+        <div className="absolute inset-0 ring-1 ring-inset ring-white/10 pointer-events-none" />
+      </div>
+
+      {/* MINIMAL TITLE & DESCRIPTION */}
+      <div className="flex flex-col gap-3 px-1">
+        <h3 className="font-display text-3xl uppercase tracking-tighter text-white leading-none group-hover:text-accent transition-colors duration-300">
+          {project.title.split(':')[0]}
+        </h3>
+        <p className="font-body text-neutral-400 text-sm md:text-base leading-relaxed line-clamp-3 group-hover:text-neutral-300 transition-colors">
+          {project.description}
+        </p>
+      </div>
+    </motion.div>
   );
 };
 
